@@ -1,0 +1,23 @@
+{
+  "name": "ses-mailer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "aws-sdk": "^2.367.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LMCv3/ses-mailer.git"
+  },
+  "author": "louie@louiemccoy.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/LMCv3/ses-mailer/issues"
+  },
+  "homepage": "https://github.com/LMCv3/ses-mailer#readme"
+}
