@@ -1,4 +1,10 @@
 const AWS = require("aws-sdk");
+const program = require('commander');
+const inquirer = require('inquirer');
+if (typeof Promise === 'undefined') {
+  AWS.config.setPromisesDependency(require('bluebird'));
+}
+
 
 AWS.config.update({
     accessKeyId: <<YOUR_ACCESS_KEY>>,

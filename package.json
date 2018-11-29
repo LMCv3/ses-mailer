@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "aws-sdk": "^2.367.0"
+    "aws-sdk": "^2.367.0",
+    "bluebird": "^3.5.3",
+    "commander": "^2.19.0",
+    "inquirer": "^6.2.0"
   },
   "devDependencies": {},
   "scripts": {
