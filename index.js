@@ -4,14 +4,50 @@ const inquirer = require('inquirer');
 if (typeof Promise === 'undefined') {
 	AWS.config.setPromisesDependency(require('bluebird'));
 }
-
-AWS.config.update({
-	accessKeyId: <<YOUR_ACCESS_KEY>>,
-	secretAccessKey: <<YOUR_ACCESS_KEY>>,
-	region: <<YOUR_ACCESS_KEY>>
-});
-
 const ses = new AWS.SES({ apiVersion: "2010-12-01" });
+let questions = [];
+let awsconfig = {};
+
+program
+	.version('1.0.0')
+	.option('-R, --region', 'AWS Region')
+	.option('-K, --keyid', 'AWS Access Key ID')
+	.option('-S, --secret', 'AWS Secret Access Key')
+	.option('-C, --configset', 'SES Configuration Set Name')
+	.parse(process.argv);
+
+AWS.config.update({region:'us-east-1'});
+console.log(AWS.config);
+
+// Set the region in our variables: priority: CLI args, aws config, choice
+if (program.region) {
+	// TO DO: Add check to make sure the region is valid
+	awsconfig.region = program.region;
+} else if (AWS.config.region == null) {
+	// only do this if the aws config doesn't already have a region set.
+	questions.push({
+		type: 'list',
+		name: 'region',
+		message: 'Which region shall we use?',
+		choices: [
+			'us-east-1',
+			'us-west-2',
+			'eu-west-1'
+		]
+	});
+}
+// use CLI arg IDs if provided
+if (program.keyid) {
+	awsconfig.accessKeyId = program.keyid;
+}
+if (program.secret) {
+	awsconfig.secretAccessKey = program.secret;
+}
+// update the AWS config, but only if there's something to update.
+if (Object.keys(awsconfig).length === 0) {
+	AWS.config.update(awsconfig);
+}
+
 const params = {
 	Destination: {
 		ToAddresses: [""XYZ@XYZ.com""] // Email address/addresses that you want to send your email
