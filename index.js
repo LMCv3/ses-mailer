@@ -32,9 +32,6 @@ program
 	.option('-C, --configset', 'SES Configuration Set Name')
 	.parse(process.argv);
 
-AWS.config.update({region:'us-east-1'});
-console.log(AWS.config);
-
 // Set the region in our variables: priority: CLI args, aws config, choice
 if (program.region) {
 	// TO DO: Add check to make sure the region is valid
