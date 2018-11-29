@@ -5,7 +5,23 @@ if (typeof Promise === 'undefined') {
 	AWS.config.setPromisesDependency(require('bluebird'));
 }
 const ses = new AWS.SES({ apiVersion: "2010-12-01" });
-let questions = [];
+let questions = [
+	{
+		type: 'input',
+		name: 'subject',
+		message: "Enter the Subject Line to be used:"
+	},
+	{
+		type: 'input',
+		name: 'senderemail',
+		message: 'Enter the Email Address of the sender:'
+	},
+	{
+		type: 'input',
+		name: 'sendername',
+		message: 'Enter the Name of the Sender:'
+	}
+];
 let awsconfig = {};
 
 program
@@ -24,8 +40,8 @@ if (program.region) {
 	// TO DO: Add check to make sure the region is valid
 	awsconfig.region = program.region;
 } else if (AWS.config.region == null) {
-	// only do this if the aws config doesn't already have a region set.
-	questions.push({
+	// only ask if the aws config doesn't already have a region set.
+	questions.unshift({
 		type: 'list',
 		name: 'region',
 		message: 'Which region shall we use?',
@@ -47,6 +63,45 @@ if (program.secret) {
 if (Object.keys(awsconfig).length === 0) {
 	AWS.config.update(awsconfig);
 }
+// TO DO: check for config sets, add question about config sets.
+// TO DO: Load up local files, add questions about email content
+// TO DO: Load up local files(*.csv), add question about email target
+inquirer.prompt(questions).then(async answers => {
+	let message = {
+		Body: {
+			Html: {
+				Charset: "UTF-8"
+			},
+			Text: {
+				Charset: "UTF-8"
+			}
+		},
+		Subject: {
+			Charset: "UTF-8",
+			Data: answers.subject
+		}
+	}
+	let emailparams = {
+		Destination: {
+			ToAddresses: []
+		},
+		Message: message,
+		Source: answers.senderemail
+	}
+	// TO DO: Load up and add "to" addresses here
+	
+	// TO DO: in a loop with all the "to" addresses
+	const sendEmail = ses.sendEmail(emailparams).promise();
+
+	sendEmail
+		.then(data => {
+			console.log("email submitted to SES", data);
+		})
+		.catch(error => {
+			// TO DO: Put something here so that we log these issues somewhere for bigger sends
+			console.log(error);
+	});
+})
 
 const params = {
 	Destination: {
@@ -73,13 +128,3 @@ const params = {
 	},
 	Source: "ABC@ABC.com"
 };
-
-const sendEmail = ses.sendEmail(params).promise();
-
-sendEmail
-	.then(data => {
-		console.log("email submitted to SES", data);
-	})
-	.catch(error => {
-		console.log(error);
-});
