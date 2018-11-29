@@ -63,7 +63,24 @@ if (program.secret) {
 if (Object.keys(awsconfig).length === 0) {
 	AWS.config.update(awsconfig);
 }
-// TO DO: check for config sets, add question about config sets.
+// check for config sets, add question about config sets.
+const configsets = ses.listConfigurationSets({MaxItems: 0}).promise();
+configsets.then(data => {
+	let num = data.ConfigurationSets.length;
+	let choices = [];
+	for (let i = 0; i < num; i++){
+		choices.push(data.ConfigurationSets[i].Name);
+	}
+	questions.unshift({
+		type: 'list',
+		name: 'configurationSet',
+		message: 'Which Configuration Set shall we use?',
+		choices: choices
+	});
+}).catch(error => {
+	console.log(error, error.stack);
+	process.exit(1);
+});
 // TO DO: Load up local files, add questions about email content
 // TO DO: Load up local files(*.csv), add question about email target
 inquirer.prompt(questions).then(async answers => {
